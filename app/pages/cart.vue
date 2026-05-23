@@ -1,4 +1,44 @@
 <script setup lang="ts">
+const cart = useCart();
+const transaction = useTransaction();
+</script>
+
+<template>
+  <div>
+    <h1>Your Cart</h1>
+    <div v-if="cart.quantity.value > 0">
+      <button @click="cart.clearCart()" class="mb-4">Remove Cart</button>
+
+      <h2>Name Items: {{ PRODUCT.NAME }}</h2>
+      <p>Items in cart: {{ cart.quantity.value }}</p>
+      <p>Total Price: ${{ cart.formattedTotalPrice }}</p>
+      <br />
+
+      <button @click="cart.increaseQuantity()" class="btn btn-secondary">
+        Add one item
+      </button>
+      <br />
+
+      <button @click="cart.decreaseQuantity()" class="btn btn-secondary">
+        Remove one item
+      </button>
+      <br />
+
+      <button @click="transaction.checkOut()" class="btn btn-primary">
+        Checkout
+      </button>
+      <br />
+    </div>
+    <div v-else>
+      <h2>Your cart is empty.</h2>
+      <NuxtLink to="/" class="text-blue-500 hover:underline">
+        Go Home
+      </NuxtLink>
+    </div>
+  </div>
+</template>
+
+<!-- <script setup lang="ts">
 const { cart, addToCart, removeFromCart, clearCart } = useCart();
 const { checkout } = useTransaction();
 
@@ -52,4 +92,4 @@ watch(
       <button @click="checkout()">Checkout {{ totalAmount }}</button>
     </div>
   </div>
-</template>
+</template> -->

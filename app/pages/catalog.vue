@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<!-- <script setup lang="ts">
 const { addToCart } = useCart();
 </script>
 
@@ -15,5 +15,10 @@ const { addToCart } = useCart();
         <button @click="addToCart(item)">Add to Cart</button>
       </div>
     </div>
+  </div>
+</template> -->
+<template>
+  <div>
+    <p>Page Doesnt exist</p>
   </div>
 </template>

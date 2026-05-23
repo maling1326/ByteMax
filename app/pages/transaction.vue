@@ -1,12 +1,15 @@
 <script setup lang="ts">
-const { transactions } = useTransaction();
+const { transactions, clearTransactions } = useTransaction();
 </script>
 
 <template>
   <div>
     <h1>Transaction Page</h1>
-    <p v-if="transactions.length <= 0">Your transaction is empty</p>
-    <div v-else>
+    <button @click="clearTransactions()" class="btn btn-secondary">
+      Clear Transactions
+    </button>
+    <br />
+    <div v-if="transactions.length > 0">
       <ul>
         <li
           v-for="transaction in transactions"
@@ -14,15 +17,17 @@ const { transactions } = useTransaction();
           class="pt-4"
         >
           <p>Date: {{ transaction.date }}</p>
-          <p>Total Amount: ${{ transaction.totalAmount.toFixed(2) }}</p>
-          <ul>
-            <li v-for="item in transaction.items" :key="item.id">
-              {{ item.details.name }} - ${{ item.totalPrice.toFixed(2) }} x
-              {{ item.quantity }}
-            </li>
-          </ul>
+          <p>Product: {{ PRODUCT.NAME }}</p>
+          <p>Quantity: {{ transaction.quantity }}</p>
+          <p>Total Amount: ${{ transaction.totalPrice.toFixed(2) }}</p>
         </li>
       </ul>
+    </div>
+    <div v-else>
+      <p>Your transaction is empty</p>
+      <NuxtLink to="/" class="text-blue-500 hover:underline">
+        Go to Home
+      </NuxtLink>
     </div>
   </div>
 </template>

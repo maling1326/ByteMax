@@ -1,66 +1,41 @@
-export interface Cart {
-  id: number;
-  quantity: number;
-  totalPrice: number;
-  selected: boolean;
-  details: Product;
-}
+import { PRODUCT } from "~/utils/product";
 
 export function useCart() {
-  const cart = useState<Cart[]>("cart", () => []);
+  const quantity = useState<number>("quantity", () => 0);
+  const totalPrice = computed(() => quantity.value * PRODUCT.PRICE);
+  const formattedTotalPrice = computed(() => totalPrice.value.toFixed(2));
 
   onMounted(() => {
-    const storedCart = localStorage.getItem("cart");
-    if (storedCart) {
-      cart.value = JSON.parse(storedCart);
-    }
+    const storedQuantity = localStorage.getItem("quantity");
+    if (storedQuantity) quantity.value = parseInt(storedQuantity);
   });
 
-  function addToCart(product: Product) {
-    const existingItem = cart.value.find((item) => item.id === product.id);
-    if (existingItem) {
-      existingItem.quantity += 1;
-      existingItem.totalPrice = existingItem.quantity * product.price;
-    } else {
-      cart.value.push({
-        id: product.id,
-        details: product,
-        totalPrice: product.price,
-        quantity: 1,
-        selected: true,
-      });
-    }
+  function increaseQuantity() {
+    quantity.value += 1;
   }
 
-  function removeFromCart(productId: number, All: boolean = false) {
-    const existingItem = cart.value.find((item) => item.id === productId);
-    if (existingItem && existingItem.quantity > 1 && !All) {
-      existingItem.quantity -= 1;
-      existingItem.totalPrice =
-        existingItem.quantity * existingItem.details.price;
-    } else {
-      cart.value = cart.value.filter((item) => item.id !== productId);
-    }
+  function decreaseQuantity() {
+    if (quantity.value > 0) quantity.value -= 1;
   }
 
   function clearCart() {
-    cart.value = [];
-
-    localStorage.removeItem("cart");
+    quantity.value = 0;
   }
 
-  watch(
-    cart,
-    (newCart) => {
-      localStorage.setItem("cart", JSON.stringify(newCart));
-    },
-    { deep: true },
-  );
+  watch(quantity, (newQuantity) => {
+    if (newQuantity <= 0) localStorage.removeItem("quantity");
+    else localStorage.setItem("quantity", newQuantity.toString());
+  });
 
   return {
-    cart,
-    addToCart,
+    // Variables
+    quantity,
+    totalPrice,
+    formattedTotalPrice,
+
+    // Functions
+    increaseQuantity,
+    decreaseQuantity,
     clearCart,
-    removeFromCart,
   };
 }

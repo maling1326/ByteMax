@@ -1,52 +1,56 @@
 interface Transaction {
   id: number;
   date: string;
-  totalAmount: number;
-  items: Cart[];
+  time: string;
+  quantity: number;
+  totalPrice: number;
 }
 
 export function useTransaction() {
-  const { cart, removeFromCart } = useCart();
-
   const transactions = useState<Transaction[]>("transactions", () => []);
+  const cart = useCart();
 
   onMounted(() => {
-    const storedTransactions = localStorage.getItem("transactions");
-    if (storedTransactions) {
-      transactions.value = JSON.parse(storedTransactions);
-    }
+    const storedtransactions = localStorage.getItem("transactions");
+    if (storedtransactions) transactions.value = JSON.parse(storedtransactions);
   });
 
-  function checkout() {
-    const items = cart.value.filter((item) => item.selected);
-    if (items.length <= 0) {
-      console.error("No selected items to checkout.");
+  function checkOut() {
+    if (cart.quantity.value <= 0) {
+      console.error("No items to checkout.");
       return;
     }
 
     transactions.value.push({
       id: Date.now(),
       date: new Date().toISOString(),
-      totalAmount: items.reduce((sum, item) => sum + item.totalPrice, 0),
-      items: items,
+      time: new Date().toLocaleTimeString(),
+      quantity: cart.quantity.value,
+      totalPrice: cart.totalPrice.value,
     });
+    cart.clearCart();
+  }
 
-    // Clear the selected items from the cart
-    items.forEach((item) => {
-      removeFromCart(item.id, true); // Remove all quantities of the item
-    });
+  function clearTransactions() {
+    transactions.value = [];
   }
 
   watch(
     transactions,
     (newTransactions) => {
-      localStorage.setItem("transactions", JSON.stringify(newTransactions));
+      if (newTransactions.length === 0) localStorage.removeItem("transactions");
+      else
+        localStorage.setItem("transactions", JSON.stringify(newTransactions));
     },
     { deep: true },
   );
 
   return {
+    // Variables
     transactions,
-    checkout,
+
+    // Functions
+    checkOut,
+    clearTransactions,
   };
 }
