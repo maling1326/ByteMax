@@ -36,7 +36,7 @@
         <div class="flex flex-col items-start gap-[0.01px] self-stretch">
           <!-- list all item -->
           <div
-            class="grid pb-53.25 gap-[32px] self-stretch grid-rows-1 grid-cols-[180px_minmax(0,1fr)_140px]"
+            class="grid pb-8 gap-[32px] self-stretch grid-rows-1 grid-cols-[180px_minmax(0,1fr)_140px] border-b border-b-orange-10-16 h-fit"
             v-for="item in cart.cart.value"
           >
             <!-- Image -->

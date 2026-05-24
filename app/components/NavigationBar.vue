@@ -123,30 +123,30 @@ const cart = useCart();
 const transaction = useTransaction();
 
 const secondaryLinkText = computed(() => {
-  if (route.path === "/temp") return "Transaction"; // Changed from History
+  if (route.path === "/") return "Transaction"; // Changed from History
   if (route.path === "/cart") return "Go Home";
   if (route.path === "/payment") return "Cart"; // Changed from /transaction
   return "";
 });
 
 const buttonText = computed(() => {
-  if (route.path === "/temp") return "CART";
+  if (route.path === "/") return "CART";
   if (route.path === "/cart") return "PAYMENT";
   if (route.path === "/payment") return "CHECKOUT"; // Changed from /transaction
   return "GO HOME";
 });
 
 function handleSecondaryButton() {
-  if (route.path === "/temp")
+  if (route.path === "/")
     router.push("/transaction"); // Changed from /history
-  else if (route.path === "/cart") router.push("/temp");
+  else if (route.path === "/cart") router.push("/");
   else if (route.path === "/payment")
     router.push("/cart"); // Changed from /transaction
   else router.push("/");
 }
 
 function handleButton() {
-  if (route.path === "/temp") {
+  if (route.path === "/") {
     if (cart.cart.value.length === 0) {
       cart.addItemToCart();
     }
@@ -160,7 +160,7 @@ function handleButton() {
       router.push("/transaction"); // Changed from /history
     }
   } else {
-    router.push("/temp");
+    router.push("/");
   }
 }
 </script>
