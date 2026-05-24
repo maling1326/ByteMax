@@ -1,95 +1,110 @@
-<script setup lang="ts">
-const cart = useCart();
-const transaction = useTransaction();
-</script>
-
 <template>
-  <div>
-    <h1>Your Cart</h1>
-    <div v-if="cart.quantity.value > 0">
-      <button @click="cart.clearCart()" class="mb-4">Remove Cart</button>
-
-      <h2>Name Items: {{ PRODUCT.NAME }}</h2>
-      <p>Items in cart: {{ cart.quantity.value }}</p>
-      <p>Total Price: ${{ cart.formattedTotalPrice }}</p>
-      <br />
-
-      <button @click="cart.increaseQuantity()" class="btn btn-secondary">
-        Add one item
-      </button>
-      <br />
-
-      <button @click="cart.decreaseQuantity()" class="btn btn-secondary">
-        Remove one item
-      </button>
-      <br />
-
-      <button @click="transaction.checkOut()" class="btn btn-primary">
-        Checkout
-      </button>
-      <br />
+  <div class="max-w-3xl mx-auto p-6 font-sans text-gray-800">
+    <div class="mb-10 p-6 bg-white rounded-xl shadow-sm border border-gray-100">
+      <h2 class="text-2xl font-bold mb-4 text-gray-900">Products</h2>
+      <div class="flex flex-wrap gap-3">
+        <button
+          @click="addItemToCart('ByteMax Nanoblades', '512 MB', 39, 'Obsidian')"
+          class="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"
+        >
+          Add 512MB Obsidian ($39)
+        </button>
+        <button
+          @click="addItemToCart('ByteMax Nanoblades', '1 TB', 69, 'Cream')"
+          class="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"
+        >
+          Add 1TB Cream ($69)
+        </button>
+      </div>
     </div>
-    <div v-else>
-      <h2>Your cart is empty.</h2>
-      <NuxtLink to="/" class="text-blue-500 hover:underline">
-        Go Home
-      </NuxtLink>
+
+    <div class="p-6 bg-white rounded-xl shadow-sm border border-gray-100">
+      <h2 class="text-2xl font-bold mb-6 text-gray-900">Your Cart</h2>
+
+      <div
+        v-if="cart.length === 0"
+        class="text-center py-10 bg-gray-50 rounded-lg border border-dashed border-gray-300"
+      >
+        <p class="text-gray-500">Your cart is currently empty.</p>
+      </div>
+
+      <div v-else class="space-y-4">
+        <div
+          v-for="(item, index) in cart"
+          :key="index"
+          class="flex flex-col sm:flex-row justify-between items-start sm:items-center p-4 border border-gray-200 rounded-lg bg-gray-50"
+        >
+          <div class="mb-4 sm:mb-0">
+            <h3 class="font-bold text-lg text-gray-900">{{ item.name }}</h3>
+            <p class="text-sm text-gray-600">
+              Variant: {{ item.size }} | {{ item.color }}
+            </p>
+            <p class="text-sm font-medium text-gray-900 mt-1">
+              Price: ${{ item.price }}
+            </p>
+          </div>
+
+          <div class="flex flex-col items-end gap-3">
+            <div
+              class="flex items-center border border-gray-300 rounded-lg overflow-hidden bg-white"
+            >
+              <button
+                @click="removeItemFromCart(item)"
+                class="px-3 py-1 hover:bg-gray-100 text-gray-600 font-bold transition-colors"
+              >
+                &minus;
+              </button>
+              <span
+                class="px-4 py-1 text-sm font-semibold border-x border-gray-300"
+              >
+                {{ item.quantity }}
+              </span>
+              <button
+                @click="
+                  addItemToCart(item.name, item.size, item.price, item.color)
+                "
+                class="px-3 py-1 hover:bg-gray-100 text-gray-600 font-bold transition-colors"
+              >
+                &plus;
+              </button>
+            </div>
+
+            <div class="flex gap-2 text-xs">
+              <button
+                @click="editItemFromCart(item, '2 TB', 129, undefined)"
+                class="px-2 py-1 text-blue-600 hover:text-blue-800 hover:underline"
+              >
+                Upgrade to 2 TB ($129)
+              </button>
+              <button
+                @click="removeItemFromCart(item, true)"
+                class="px-2 py-1 text-red-500 hover:text-red-700 hover:underline"
+              >
+                Remove
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div
+          class="pt-6 mt-6 border-t border-gray-200 flex justify-between items-center"
+        >
+          <span class="text-gray-600 font-medium">Subtotal</span>
+          <h2 class="text-2xl font-black text-gray-900">${{ totalPrice }}</h2>
+        </div>
+      </div>
     </div>
   </div>
 </template>
 
-<!-- <script setup lang="ts">
-const { cart, addToCart, removeFromCart, clearCart } = useCart();
-const { checkout } = useTransaction();
+<script setup lang="ts">
+import { useCart } from "~/composables/useCart";
 
-const totalAmount = ref(0);
-
-onMounted(() => {
-  if (cart.value.length > 0) {
-    // sum total amount
-    totalAmount.value = cart.value
-      .filter((item) => item.selected)
-      .reduce((total, item) => total + item.totalPrice, 0);
-  }
-});
-
-watch(
-  () => cart.value,
-  (newCart) => {
-    totalAmount.value = newCart
-      .filter((item) => item.selected)
-      .reduce((total, item) => total + item.totalPrice, 0);
-  },
-  { deep: true },
-);
+const {
+  cart,
+  totalPrice,
+  addItemToCart,
+  removeItemFromCart,
+  editItemFromCart,
+} = useCart();
 </script>
-
-<template>
-  <div>
-    <h1>Your Cart</h1>
-    <button @click="clearCart">Remove Cart</button>
-    <p v-if="cart.length === 0">Your cart is empty.</p>
-    <div v-else>
-      <div v-for="item in cart" :key="item.id" class="cart-item gap-4">
-        <h2 class="pt-4">#{{ item.id }} - {{ item.details.name }}</h2>
-        <p>Quantity: {{ item.quantity }}</p>
-        <p>Total Price: ${{ item.totalPrice.toFixed(2) }}</p>
-        <button @click="item.selected = !item.selected">
-          Toggle Select<span v-if="item.selected">
-            - <span class="font-bold">SELECTED</span></span
-          >
-        </button>
-        <br />
-        <button @click="addToCart(item.details)">Add one item</button>
-        <br />
-        <button @click="removeFromCart(item.id)">Remove one item</button>
-        <br />
-        <button @click="removeFromCart(item.id, true)">Remove all items</button>
-      </div>
-      <br />
-      <br />
-      <br />
-      <button @click="checkout()">Checkout {{ totalAmount }}</button>
-    </div>
-  </div>
-</template> -->
