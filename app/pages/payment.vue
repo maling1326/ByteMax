@@ -160,8 +160,7 @@
             <p
               class="text-orange-10-65 font-family-font-2 text-11 italic font-400 spacing-[17.6px]"
             >
-              Calculated at {{ (cart.taxRate.value * 100 - 100).toFixed(0) }}%
-              of all item(s)
+              Calculated at {{ (taxRate * 100).toFixed(0) }}% of all item(s)
             </p>
           </div>
           <p

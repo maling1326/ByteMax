@@ -3,7 +3,7 @@
     class="py-3 px-16 flex items-center justify-between border-b border-b-orange-10-16 bg-orange-88-80 backdrop-blur-sm w-full"
   >
     <!-- Brand Logo -->
-    <div class="flex items-baseline">
+    <div class="flex items-baseline cursor-pointer" @click="router.push('/')">
       <svg
         width="118"
         height="35"
@@ -146,11 +146,11 @@ const buttonText = computed(() => {
 function handleButton() {
   if (route.path === "/") {
     if (cart.cart.value.length === 0) {
+      cart.addItemToCart({
+        variant: "512 MB",
+        price: 39,
+      });
     }
-    cart.addItemToCart({
-      variant: "512 MB",
-      price: 39,
-    });
     router.push("/cart");
   } else if (route.path === "/cart") {
     if (cart.cart.value.length >= 1) {
